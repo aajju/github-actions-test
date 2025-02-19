@@ -23,5 +23,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
+      - name: Set environment variables
+        run: echo "TEST_VARIABLES=${{ secrets.TEST_VARIABLES }}" >> $GITHUB_ENV
+
       - name: Run Python script
         run: python apitest-script.py # API 요청을 할 Python 스크립트 실행
