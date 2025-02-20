@@ -1,4 +1,8 @@
+from dotenv import load_dotenv
+
 import os
+
+load_dotenv()
 
 JSON_KEYFILE = os.getenv("JSON_KEYFILE")
 SPREADSHEET_ID = os.getenv("SPREADSHEET_ID")
@@ -57,3 +61,20 @@ URL_SUCCESSBID_PRIVATE = (
 
 # naver_crawling
 NAVER_API_URL = "https://openapi.naver.com/v1/search/news.json"
+
+
+# 수자원공사 계약정보
+URL_SUCCESSBID_KWATER_SERVICE = "https://apis.data.go.kr/B500001/ebid/cntrct3/servcList"
+URL_SUCCESSBID_KWATER_CONSTRUCTION = (
+    "https://apis.data.go.kr/B500001/ebid/cntrct3/cntrwkList"
+)
+URL_SUCCESSBID_KWATER_PRODUCT = "https://apis.data.go.kr/B500001/ebid/cntrct3/dmscptList"
+
+# LH 계약정보
+URL_SUCCESSBID_LH_SERVICE = f"http://openapi.ebid.lh.or.kr/ebid.com.openapi.service.OpenContractInfoList.dev?serviceKey={API_KEY2}"
+
+# 공고 용역 우리 낙찰
+URL_NEWOPEN_SERVICE_WITH_NUMBER = (
+    "https://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoServc02"
+)
+URL_NEWOPEN_OURCONSTRUCTION = "https://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoCnstwk02"
