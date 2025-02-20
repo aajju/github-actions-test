@@ -40,7 +40,7 @@ max_batch_size = 10
 
 
 def search_naver_news(keyword, client_id, client_secret):
-    url = config.NAVER_API_URL
+    url = api_url.NAVER_API_URL
     headers = {"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}
 
     params = {
@@ -119,7 +119,7 @@ def is_recent(pub_date):
 # Slack 메시지 전송 함수
 def send_slack_message(message):
     data = {"text": message}
-    response = requests.post(config.SLACK_WEBHOOK_NAVER_URL, json=data)
+    response = requests.post(api_url.SLACK_WEBHOOK_NAVER_URL, json=data)
     if response.status_code == 200:
         print("Slack message sent successfully")
     else:
@@ -137,7 +137,7 @@ def crawling():
 
     for query in queries:
         # print(query)
-        articles = search_naver_news(query, config.CLIENT_ID, config.CLIENT_SECRET)
+        articles = search_naver_news(query, api_url.CLIENT_ID, api_url.CLIENT_SECRET)
         if not articles:
             message = f"-------------------------------------------------------------------\n*검색어 : {query}*\n검색결과가 없습니다\n"
             messages.append(message)
@@ -163,7 +163,7 @@ def crawling():
         messages = []
 
     for query in queries_2:
-        articles = search_naver_news(query, config.CLIENT_ID, config.CLIENT_SECRET)
+        articles = search_naver_news(query, api_url.CLIENT_ID, api_url.CLIENT_SECRET)
         if not articles:
             message = f"-------------------------------------------------------------------\n*검색어 : {query}*\n검색결과가 없습니다\n"
             messages.append(message)
