@@ -65,8 +65,8 @@ def process_data_bid(data, category):
 
 def main():
 
-    # crawling.crawling()
-    # time.sleep(1)
+    crawling.crawling()
+    time.sleep(1)
 
     # 낙찰 용역 스크랩
     data_successbid_service = api.get_data_successbid_service()
