@@ -29,8 +29,11 @@ jobs:
           pip install oauth2client
           pip install pytz
 
-      - name: Create JSON key file from secret
-        run: printf "%s" "${{ secrets.JSON_RAWDATA }}" > ./cowithone-scrap-1686123588417-7ea5acec3d36.json
+      - name: Set up Google Sheets API credentials
+        run: |
+          echo ${{ secrets.JSON_BASE64 }} | base64 --decode > ./cowithone-scrap-1686123588417-7ea5acec3d36.json
+        # env:
+        # GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.JSON_BASE64 }}
 
       - name: Show the content of the generated JSON file
         run: cat ./cowithone-scrap-1686123588417-7ea5acec3d36.json
