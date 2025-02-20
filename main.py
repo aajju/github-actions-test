@@ -60,7 +60,7 @@ def process_data_bid(data, category):
     if category == "낙찰정보_민간":
         message_bid += f"{api_url.SPREADSHEET_LINK}"
         print(message_bid)
-        slack.send_message(message_bid,"bid")
+        slack.send_message(message_bid)
 
 
 def main():
