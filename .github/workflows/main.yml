@@ -32,6 +32,9 @@ jobs:
       - name: Create JSON key file from secret
         run: echo "${{ secrets.JSON_RAWDATA }}" > ./cowithone-scrap-1686123588417-7ea5acec3d36.json
 
+      - name: Show the content of the generated JSON file
+        run: cat ./cowithone-scrap-1686123588417-7ea5acec3d36.json
+
       - name: Set environment variables
         run: |
           echo "JSON_KEYFILE=${{ secrets.JSON_KEYFILE }}" >> $GITHUB_ENV
