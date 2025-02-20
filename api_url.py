@@ -1,8 +1,8 @@
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 import os
 
-load_dotenv()
+# load_dotenv()
 
 JSON_KEYFILE = os.getenv("JSON_KEYFILE")
 SPREADSHEET_ID = os.getenv("SPREADSHEET_ID")
