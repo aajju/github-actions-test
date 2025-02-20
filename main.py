@@ -1,10 +1,10 @@
-
 import spreadsheet
 import slack
 import api
 import datetime
 import crawling
 import time
+import api_url
 
 
 today = datetime.date.today().strftime("%Y-%m-%d")  # 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
@@ -58,7 +58,7 @@ def process_data_bid(data, category):
         message_bid += f"*{category}* 나라장터 정보가 없습니다 \n"
 
     if category == "낙찰정보_민간":
-        message_bid += f"{config.SPREADSHEET_LINK}"
+        message_bid += f"{api_url.SPREADSHEET_LINK}"
         print(message_bid)
         slack.send_message(message_bid,"bid")
 

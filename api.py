@@ -1,5 +1,5 @@
 import requests
-import config
+import api_url
 import time
 import main
 import xml.etree.ElementTree as ET
@@ -74,7 +74,7 @@ def filter_items_bid(items, url):
 
     instt_name = ["수자원", "토지", "주택", "상수", "하수", "맑은물"]
 
-    if url == config.URL_SUCCESSBID_SERVICE:  # 낙찰 용역 필터링 (공고문에 키워드로 필터링)
+    if url == api_url.URL_SUCCESSBID_SERVICE:  # 낙찰 용역 필터링 (공고문에 키워드로 필터링)
         for item in items:
             bidNtceNo = item.get("bidNtceNo")
 
@@ -95,7 +95,7 @@ def filter_items_bid(items, url):
                 # print(bidNtceNos)
                 filtered_items.append(item)
 
-    elif url == config.URL_SUCCESSBID_CONSTRUCTION:  # 낙찰 공사 필터링
+    elif url == api_url.URL_SUCCESSBID_CONSTRUCTION:  # 낙찰 공사 필터링
         for item in items:
             rgstDt = item.get("rgstDt", "")
             date = datetime.strptime(rgstDt, "%Y-%m-%d %H:%M:%S")
@@ -107,7 +107,7 @@ def filter_items_bid(items, url):
             ):
                 filtered_items.append(item)
 
-    elif url == config.URL_NEWOPEN_SERVICE:  # 신규공고 용역 필터링
+    elif url == api_url.URL_NEWOPEN_SERVICE:  # 신규공고 용역 필터링
         for item in items:
             # print(item)
             bidNtceNo = item.get("bidNtceNo")
@@ -144,7 +144,7 @@ def filter_items_bid(items, url):
                     filtered_items.remove(existing_item)
                     filtered_items.append(item)  # for item in items:
 
-    elif url == config.URL_NEWOPEN_CONSTRUCTION:  # 신규공고 공사 필터링
+    elif url == api_url.URL_NEWOPEN_CONSTRUCTION:  # 신규공고 공사 필터링
         for item in items:
             bidNtceNo = item.get("bidNtceNo")
             presmptPrce = int(float(item.get("presmptPrce", 0) or 0))  # 소수를 정수로 변환
@@ -198,8 +198,8 @@ def filter_items_bid(items, url):
                     filtered_items.append(item)
 
     elif url in [
-        config.URL_NEWOPEN_PRIVATE_SERVICE,  # 신규공고 민간용역
-        config.URL_NEWOPEN_PRIVATE_CONSTRUCTION,  # 신규공고 민간공사
+        api_url.URL_NEWOPEN_PRIVATE_SERVICE,  # 신규공고 민간용역
+        api_url.URL_NEWOPEN_PRIVATE_CONSTRUCTION,  # 신규공고 민간공사
     ]:  # 신규공고 민간 필터링
         filtered_items_dict = {}
         for item in items:
@@ -217,7 +217,7 @@ def filter_items_bid(items, url):
                         filtered_items_dict[bidNtceNo] = item
         filtered_items = list(filtered_items_dict.values())
 
-    elif url == config.URL_SUCCESSBID_PRIVATE:  # 낙찰 민간
+    elif url == api_url.URL_SUCCESSBID_PRIVATE:  # 낙찰 민간
         for item in items:
             bidNtceNm = item.get("bidNtceNm", "").lower()
             sucsfbidAmt = int(float(item.get("sucsfbidAmt", 0) or 0))  # 소수를 정수로 변환
@@ -234,7 +234,7 @@ def filter_items_bid(items, url):
                 filtered_items.append(item)
 
     elif url in [
-        config.URL_SUCCESSBID_KWATER_SERVICE,  # 낙찰 수자원 용역
+        api_url.URL_SUCCESSBID_KWATER_SERVICE,  # 낙찰 수자원 용역
     ]:
         kwater_items = items["item"]
         print("kwater filter function")
@@ -258,7 +258,7 @@ def filter_items_bid(items, url):
                 filtered_items.append(item)
 
     elif url in [
-        config.URL_SUCCESSBID_KWATER_CONSTRUCTION,  # 낙찰 수자원 공사
+        api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION,  # 낙찰 수자원 공사
     ]:
         kwater_items = items["item"]
 
@@ -280,7 +280,7 @@ def filter_items_bid(items, url):
             ):
                 filtered_items.append(item)
 
-    elif url == config.URL_SUCCESSBID_LH_SERVICE:  # LH 낙찰
+    elif url == api_url.URL_SUCCESSBID_LH_SERVICE:  # LH 낙찰
         lh_items = items["item"]
         for item in lh_items:
             if (
@@ -290,8 +290,8 @@ def filter_items_bid(items, url):
                 filtered_items.append(item)
 
     elif url in [
-        config.URL_SCHEDULED_BID_SERVICE,
-        config.URL_SCHEDULED_BID_CONSTRUCTION,
+        api_url.URL_SCHEDULED_BID_SERVICE,
+        api_url.URL_SCHEDULED_BID_CONSTRUCTION,
     ]:  # 발주예정 용역, 공사
         for item in items:
             bsnsDivCd = item.get("bsnsDivCd", "")
@@ -319,7 +319,7 @@ def filter_items_bid2(items, url):
     # search_keywords1 = ["용수", "이설", "상수", "하수", "도수", "오수", "우수관", "송수", "배수"]
 
 
-    if url == config.URL_SUCCESSBID_SERVICE:  # 낙찰 용역 필터링 (공고문에 키워드로 필터링)
+    if url == api_url.URL_SUCCESSBID_SERVICE:  # 낙찰 용역 필터링 (공고문에 키워드로 필터링)
         for item in items:
             bidNtceNo = item.get("bidNtceNo")
 
@@ -335,7 +335,7 @@ def filter_items_bid2(items, url):
                 # print(bidNtceNos)
                 filtered_items.append(item)
 
-    elif url == config.URL_NEWOPEN_SERVICE:  # 신규공고 용역 필터링
+    elif url == api_url.URL_NEWOPEN_SERVICE:  # 신규공고 용역 필터링
         for item in items:
             bidNtceNo = item.get("bidNtceNo")
             # bdgtAmt = int(float(item.get("presmptPrce", 0) or 0))  # 소수를 정수로 변환
@@ -360,7 +360,7 @@ def get_data_bid(url, sign=True):
 
     # 요청 파라미터
     params = {
-        "ServiceKey": config.API_KEY,
+        "ServiceKey": api_url.API_KEY,
         "numOfRows": NUM_OF_ROWS,  # 가져올 항목 수
         "pageNo": 1,  # 페이지 번호
         "inqryDiv": 1,
@@ -373,47 +373,47 @@ def get_data_bid(url, sign=True):
 
     if sign :
         if url in [
-            config.URL_SCHEDULED_BID_SERVICE,
-            config.URL_SCHEDULED_BID_CONSTRUCTION,
-            config.URL_SUCCESSBID_SERVICE,
-            config.URL_SUCCESSBID_CONSTRUCTION,
-            config.URL_NEWOPEN_SERVICE,
-            config.URL_NEWOPEN_CONSTRUCTION,
-            config.URL_NEWOPEN_PRIVATE_SERVICE,
-            config.URL_NEWOPEN_PRIVATE_CONSTRUCTION,
-            config.URL_SUCCESSBID_PRIVATE,
-            config.URL_SUCCESSBID_KWATER_SERVICE,
-            config.URL_SUCCESSBID_KWATER_CONSTRUCTION,
-            # config.URL_SUCCESSBID_KWATER_PRODUCT,
-            config.URL_SUCCESSBID_LH_SERVICE,
+            api_url.URL_SCHEDULED_BID_SERVICE,
+            api_url.URL_SCHEDULED_BID_CONSTRUCTION,
+            api_url.URL_SUCCESSBID_SERVICE,
+            api_url.URL_SUCCESSBID_CONSTRUCTION,
+            api_url.URL_NEWOPEN_SERVICE,
+            api_url.URL_NEWOPEN_CONSTRUCTION,
+            api_url.URL_NEWOPEN_PRIVATE_SERVICE,
+            api_url.URL_NEWOPEN_PRIVATE_CONSTRUCTION,
+            api_url.URL_SUCCESSBID_PRIVATE,
+            api_url.URL_SUCCESSBID_KWATER_SERVICE,
+            api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION,
+            # api_url.URL_SUCCESSBID_KWATER_PRODUCT,
+            api_url.URL_SUCCESSBID_LH_SERVICE,
         ]:
             items = []
             filtered_items = []
 
-            if url in [config.URL_SUCCESSBID_SERVICE, config.URL_SUCCESSBID_CONSTRUCTION]:
+            if url in [api_url.URL_SUCCESSBID_SERVICE, api_url.URL_SUCCESSBID_CONSTRUCTION]:
                 params["inqryBgnDt"] = inqry_bgn_dt_1month
                 params["inqryDiv"] = 2  # 1: 공고게시일시,  2:개찰일시, 3:입찰공고번호
-                if url == config.URL_SUCCESSBID_SERVICE:
+                if url == api_url.URL_SUCCESSBID_SERVICE:
                     params["presmptPrceBgn"] = 100000000  # 1억 이상
                     params["bidNtceNm"] = required_keyword
 
-                elif url == config.URL_SUCCESSBID_CONSTRUCTION:
+                elif url == api_url.URL_SUCCESSBID_CONSTRUCTION:
                     params["presmptPrceBgn"] = 2000000000  # 20억 이상
 
-            elif url == config.URL_NEWOPEN_SERVICE:  # 신규공고_용역
+            elif url == api_url.URL_NEWOPEN_SERVICE:  # 신규공고_용역
                 params["presmptPrceBgn"] = 300000000  # 3억 이상
                 params["bidNtceNm"] = required_keyword
 
-            elif url == config.URL_NEWOPEN_CONSTRUCTION:  # 신규공고_공사
+            elif url == api_url.URL_NEWOPEN_CONSTRUCTION:  # 신규공고_공사
                 params["presmptPrceBgn"] = 5000000000  # 50억 이상
 
             elif url in [  # 수자원 계약정보
-                config.URL_SUCCESSBID_KWATER_SERVICE,
-                config.URL_SUCCESSBID_KWATER_CONSTRUCTION,
-                # config.URL_SUCCESSBID_KWATER_PRODUCT,
+                api_url.URL_SUCCESSBID_KWATER_SERVICE,
+                api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION,
+                # api_url.URL_SUCCESSBID_KWATER_PRODUCT,
             ]:
                 # params["_type"] = params.pop("type")
-                # params["ServiceKey"] = config.API_KEY2
+                # params["ServiceKey"] = api_url.API_KEY2
                 del params["inqryDiv"]
                 del params["inqryBgnDt"]
                 del params["inqryEndDt"]
@@ -422,7 +422,7 @@ def get_data_bid(url, sign=True):
                 # params["searchDt"] = yesterday_month
                 params["searchDt"] = 202502 # 20250213
 
-            elif url == config.URL_SUCCESSBID_LH_SERVICE:  # LH 계약정보
+            elif url == api_url.URL_SUCCESSBID_LH_SERVICE:  # LH 계약정보
                 del params["ServiceKey"]
                 del params["inqryDiv"]
                 del params["inqryBgnDt"]
@@ -434,8 +434,8 @@ def get_data_bid(url, sign=True):
                 # params["contractDtEnd"] = yesterday_day
 
             elif url in [
-                config.URL_SCHEDULED_BID_SERVICE,
-                config.URL_SCHEDULED_BID_CONSTRUCTION,
+                api_url.URL_SCHEDULED_BID_SERVICE,
+                api_url.URL_SCHEDULED_BID_CONSTRUCTION,
             ]:  # 발주예정(용역)
                 # params["orderBgnYm"] = yesterday_month
 
@@ -446,7 +446,7 @@ def get_data_bid(url, sign=True):
                 print(params)
                 response = requests.get(url, params=params, verify=False, timeout=60)
                 if response.status_code == 200:
-                    if url == config.URL_SUCCESSBID_LH_SERVICE:
+                    if url == api_url.URL_SUCCESSBID_LH_SERVICE:
                         try:
                             encoding = response.encoding if response.encoding else "utf-8"
                             root = ET.fromstring(response.content.decode(encoding))
@@ -506,7 +506,7 @@ def get_data_bid(url, sign=True):
                             items = []  # items 키가 없는 경우 빈 리스트로 초기화
                     print("total count: ", total_count)
 
-                    if total_count > 999 and url != config.URL_SUCCESSBID_LH_SERVICE:
+                    if total_count > 999 and url != api_url.URL_SUCCESSBID_LH_SERVICE:
                         num_of_pages = (total_count // NUM_OF_ROWS) + 1  # 총 페이지 수 계산
                         for page in range(2, num_of_pages + 1):
                             params["pageNo"] = page  # 페이지 번호 설정
@@ -522,7 +522,7 @@ def get_data_bid(url, sign=True):
                         # print(items[0])
                         filtered_items = filter_items_bid(items, url)
 
-                    if url == config.URL_SUCCESSBID_SERVICE:
+                    if url == api_url.URL_SUCCESSBID_SERVICE:
                         data = get_data_w_number()
                         main.process_data_bid(data, "낙찰용역_w공고")
                     print("len(filtered_items):", len(filtered_items))
@@ -544,11 +544,11 @@ def get_data_bid(url, sign=True):
         items = []
         filtered_items = []
 
-        if url in [config.URL_SUCCESSBID_SERVICE, config.URL_SUCCESSBID_CONSTRUCTION]:
+        if url in [api_url.URL_SUCCESSBID_SERVICE, api_url.URL_SUCCESSBID_CONSTRUCTION]:
             params["inqryBgnDt"] = inqry_bgn_dt_1month
             params["inqryDiv"] = 2  # 1: 공고게시일시,  2:개찰일시, 3:입찰공고번호
        
-        elif url == config.URL_NEWOPEN_SERVICE:  # 신규공고_용역
+        elif url == api_url.URL_NEWOPEN_SERVICE:  # 신규공고_용역
                 params["presmptPrceBgn"] = 300000000  # 3억 이상
 
         try:
@@ -594,59 +594,59 @@ def get_data_bid(url, sign=True):
         return filtered_items
 
 def get_data_scheduledbid_service():
-    return get_data_bid(config.URL_SCHEDULED_BID_SERVICE)
+    return get_data_bid(api_url.URL_SCHEDULED_BID_SERVICE)
 
 # def get_data_scheduledbid_construction():
-#     return get_data_bid(config.URL_SCHEDULED_BID_CONSTRUCTION)
+#     return get_data_bid(api_url.URL_SCHEDULED_BID_CONSTRUCTION)
 
 def get_data_successbid_service():
-    return get_data_bid(config.URL_SUCCESSBID_SERVICE)
+    return get_data_bid(api_url.URL_SUCCESSBID_SERVICE)
 
 def get_data_successbid_service_nodesign():
-    return get_data_bid(config.URL_SUCCESSBID_SERVICE, sign=False)
+    return get_data_bid(api_url.URL_SUCCESSBID_SERVICE, sign=False)
 
 def get_data_successbid_construction():
-    return get_data_bid(config.URL_SUCCESSBID_CONSTRUCTION)
+    return get_data_bid(api_url.URL_SUCCESSBID_CONSTRUCTION)
 
 def get_data_newopen_service():
-    return get_data_bid(config.URL_NEWOPEN_SERVICE)
+    return get_data_bid(api_url.URL_NEWOPEN_SERVICE)
 
 def get_data_newopen_service_nodesign():
-    return get_data_bid(config.URL_NEWOPEN_SERVICE, sign=False)
+    return get_data_bid(api_url.URL_NEWOPEN_SERVICE, sign=False)
 
 def get_data_newopen_construction():
-    return get_data_bid(config.URL_NEWOPEN_CONSTRUCTION)
+    return get_data_bid(api_url.URL_NEWOPEN_CONSTRUCTION)
 
 
 def get_data_newopen_private():
-    data_service = get_data_bid(config.URL_NEWOPEN_PRIVATE_SERVICE)
-    data_construction = get_data_bid(config.URL_NEWOPEN_PRIVATE_CONSTRUCTION)
+    data_service = get_data_bid(api_url.URL_NEWOPEN_PRIVATE_SERVICE)
+    data_construction = get_data_bid(api_url.URL_NEWOPEN_PRIVATE_CONSTRUCTION)
     return data_service + data_construction
 
 
 def get_data_successbid_private():
-    return get_data_bid(config.URL_SUCCESSBID_PRIVATE)
+    return get_data_bid(api_url.URL_SUCCESSBID_PRIVATE)
 
 
 # def get_data_our_newopen():
-#       data_service = get_ourdata(config.URL_NEWOPEN_SERVICE_WITH_NUMBER)
-#     # data_construction = get_ourdata(config.URL_NEWOPEN_OURCONSTRUCTION)
+#       data_service = get_ourdata(api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER)
+#     # data_construction = get_ourdata(api_url.URL_NEWOPEN_OURCONSTRUCTION)
 #     return data_service
 #     # return data_service + data_construction
 
 
 def get_data_successbid_kwater():
-    # return get_data_successbid(config.URL_SUCCESSBID_KWATER_SERVICE)
-    data_service = get_data_bid(config.URL_SUCCESSBID_KWATER_SERVICE)
-    data_construction = get_data_bid(config.URL_SUCCESSBID_KWATER_CONSTRUCTION)
-    # data_product = get_data_successbid(config.URL_SUCCESSBID_KWATER_PRODUCT)
+    # return get_data_successbid(api_url.URL_SUCCESSBID_KWATER_SERVICE)
+    data_service = get_data_bid(api_url.URL_SUCCESSBID_KWATER_SERVICE)
+    data_construction = get_data_bid(api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION)
+    # data_product = get_data_successbid(api_url.URL_SUCCESSBID_KWATER_PRODUCT)
 
     return data_construction + data_service  # + data_product
     # return data_service  # + data_product
 
 
 def get_data_successbid_lh():
-    return get_data_bid(config.URL_SUCCESSBID_LH_SERVICE)
+    return get_data_bid(api_url.URL_SUCCESSBID_LH_SERVICE)
 
 
 def get_data_w_number():
@@ -654,7 +654,7 @@ def get_data_w_number():
     items = []  # 결과를 담을 빈 리스트
     for bidNtceNo in bidNtceNos:
         params = {
-            "ServiceKey": config.API_KEY,
+            "ServiceKey": api_url.API_KEY,
             "numOfRows": 10,  # 가져올 항목 수
             "pageNo": 1,  # 페이지 번호
             "inqryDiv": 2,  # 1: 공고게시일시,  2:공고번호
@@ -662,7 +662,7 @@ def get_data_w_number():
             "bidNtceNo": bidNtceNo,
         }
         response = requests.get(
-            config.URL_NEWOPEN_SERVICE_WITH_NUMBER, params=params, verify=False
+            api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER, params=params, verify=False
         )
         time.sleep(1)
         if response.status_code == 200:
@@ -681,6 +681,6 @@ def get_data_w_number():
 
 
 # def get_data_newopen_service_with_number():
-#     data_service = get_data_w_number(config.URL_NEWOPEN_SERVICE_WITH_NUMBER)
+#     data_service = get_data_w_number(api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER)
 #     return data_service
 
