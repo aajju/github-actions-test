@@ -17,8 +17,8 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 
 # 발주예정 용역, 공사
-URL_SCHEDULED_BID_SERVICE = "https://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListServcPPSSrch"
-URL_SCHEDULED_BID_CONSTRUCTION = "https://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListCnstwkPPSSrch"
+URL_SCHEDULED_BID_SERVICE = "http://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListServcPPSSrch"
+URL_SCHEDULED_BID_CONSTRUCTION = "http://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListCnstwkPPSSrch"
 
 # 낙찰 용역, 공사
 URL_SUCCESSBID_SERVICE = (
@@ -46,35 +46,35 @@ URL_NEWOPEN_CONSTRUCTION = "http://apis.data.go.kr/1230000/ad/BidPublicInfoServi
 # 민간입찰공고 용역, 공사
 URL_NEWOPEN_PRIVATE_SERVICE = (
     # "https://apis.data.go.kr/1230000/PrvtBidNtceService/getPrvtBidPblancListInfoServc"
-    "https://apis.data.go.kr/1230000/ao/PrvtBidNtceService/getPrvtBidPblancListInfoServcPPSSrch?"
+    "http://apis.data.go.kr/1230000/ao/PrvtBidNtceService/getPrvtBidPblancListInfoServcPPSSrch?"
 )
 URL_NEWOPEN_PRIVATE_CONSTRUCTION = (
     # "https://apis.data.go.kr/1230000/PrvtBidNtceService/getPrvtBidPblancListInfoCnstwk"
-    "https://apis.data.go.kr/1230000/ao/PrvtBidNtceService/getPrvtBidPblancListInfoCnstwkPPSSrch"
+    "http://apis.data.go.kr/1230000/ao/PrvtBidNtceService/getPrvtBidPblancListInfoCnstwkPPSSrch"
 )
 
 # 민간 낙찰
 URL_SUCCESSBID_PRIVATE = (
     # "https://apis.data.go.kr/1230000/PrvtScsbidInfoService/getPrvtScsbidListSttus"
-    "https://apis.data.go.kr/1230000/ao/PrvtScsbidInfoService/getPrvtScsbidListSttusPPSSrch?"
+    "http://apis.data.go.kr/1230000/ao/PrvtScsbidInfoService/getPrvtScsbidListSttusPPSSrch?"
 )
 
 # naver_crawling
-NAVER_API_URL = "https://openapi.naver.com/v1/search/news.json"
+NAVER_API_URL = "http://openapi.naver.com/v1/search/news.json"
 
 
 # 수자원공사 계약정보
-URL_SUCCESSBID_KWATER_SERVICE = "https://apis.data.go.kr/B500001/ebid/cntrct3/servcList"
+URL_SUCCESSBID_KWATER_SERVICE = "http://apis.data.go.kr/B500001/ebid/cntrct3/servcList"
 URL_SUCCESSBID_KWATER_CONSTRUCTION = (
-    "https://apis.data.go.kr/B500001/ebid/cntrct3/cntrwkList"
+    "http://apis.data.go.kr/B500001/ebid/cntrct3/cntrwkList"
 )
-URL_SUCCESSBID_KWATER_PRODUCT = "https://apis.data.go.kr/B500001/ebid/cntrct3/dmscptList"
+URL_SUCCESSBID_KWATER_PRODUCT = "http://apis.data.go.kr/B500001/ebid/cntrct3/dmscptList"
 
 # LH 계약정보
 URL_SUCCESSBID_LH_SERVICE = f"http://openapi.ebid.lh.or.kr/ebid.com.openapi.service.OpenContractInfoList.dev?serviceKey={API_KEY2}"
 
 # 공고 용역 우리 낙찰
 URL_NEWOPEN_SERVICE_WITH_NUMBER = (
-    "https://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoServc02"
+    "http://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoServc02"
 )
-URL_NEWOPEN_OURCONSTRUCTION = "https://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoCnstwk02"
+URL_NEWOPEN_OURCONSTRUCTION = "http://apis.data.go.kr/1230000/BidPublicInfoService05/getBidPblancListInfoCnstwk02"
