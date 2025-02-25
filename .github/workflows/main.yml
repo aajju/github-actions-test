@@ -2,7 +2,7 @@ name: Run Crawling
 
 on:
   schedule:
-    - cron: "0 0 * * *" # (UTC 기준) 한국시간기준 9시
+    - cron: "30 22 * * *" # (UTC 기준) 한국시간기준 오전 7시 30분
   workflow_dispatch: # 수동 실행을 원할 때 사용할 수 있음
 
 jobs:
