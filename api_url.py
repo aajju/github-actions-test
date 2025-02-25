@@ -17,7 +17,8 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 
 # 발주예정 용역, 공사
-URL_SCHEDULED_BID_SERVICE = "http://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListServcPPSSrch"
+# URL_SCHEDULED_BID_SERVICE = "http://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListServcPPSSrch"
+URL_SCHEDULED_BID_SERVICE= "http://apis.data.go.kr/1230000/ao/OrderPlanSttusService/getOrderPlanSttusListServcPPSSrch"
 URL_SCHEDULED_BID_CONSTRUCTION = "http://apis.data.go.kr/1230000/OrderPlanSttusService/getOrderPlanSttusListCnstwkPPSSrch"
 
 # 낙찰 용역, 공사

@@ -293,17 +293,18 @@ def filter_items_bid(items, url):
         api_url.URL_SCHEDULED_BID_SERVICE,
         api_url.URL_SCHEDULED_BID_CONSTRUCTION,
     ]:  # 발주예정 용역, 공사
+        # print(items)
         for item in items:
             bsnsDivCd = item.get("bsnsDivCd", "")
             bizNm = item.get("bizNm", "")
             cntrctMthdNm = item.get("cntrctMthdNm", "")
 
-            if any(keyword in bizNm for keyword in ["설계", "계획"]) and (bsnsDivCd == "5"):
+            if any(keyword in bizNm for keyword in ["설계", "계획"]) and (bsnsDivCd == "05"):
                 if any(keyword in bizNm for keyword in search_keywords) and (
                     int(float(item["sumOrderAmt"].replace(",", "")) or 0) > 100000000
                 ):
                     filtered_items.append(item)
-            if (bsnsDivCd == "3") and (cntrctMthdNm == "기술제안"):
+            if (bsnsDivCd == "03") and (cntrctMthdNm == "기술제안"):
                 filtered_items.append(item)
 
         # print(filtered_items)
@@ -367,8 +368,8 @@ def get_data_bid(url, sign=True):
         "type": "json",
         "inqryBgnDt": inqry_bgn_dt,
         "inqryEndDt": inqry_end_dt,
-        # "inqryBgnDt": 202502140000,
-        # "inqryEndDt": 202502172359,
+        # "inqryBgnDt": 202502210000,
+        # "inqryEndDt": 202502242359,
     }
 
     if sign :
@@ -419,8 +420,8 @@ def get_data_bid(url, sign=True):
                 del params["inqryEndDt"]
                 del params["type"]
                 params["_type"] = "json"
-                # params["searchDt"] = yesterday_month
-                params["searchDt"] = 202502 # 20250213
+                params["searchDt"] = yesterday_month
+                # params["searchDt"] = 202502 # 20250225
 
             elif url == api_url.URL_SUCCESSBID_LH_SERVICE:  # LH 계약정보
                 del params["ServiceKey"]
@@ -428,18 +429,19 @@ def get_data_bid(url, sign=True):
                 del params["inqryBgnDt"]
                 del params["inqryEndDt"]
                 del params["type"]
-                params["contractDtStart"] = 20250101
-                params["contractDtEnd"] = 20250131
-                # params["contractDtStart"] = yesterday_day
-                # params["contractDtEnd"] = yesterday_day
+                # params["contractDtStart"] = 20250201
+                # params["contractDtEnd"] = 20250225
+                params["contractDtStart"] = yesterday_day
+                params["contractDtEnd"] = yesterday_day
 
             elif url in [
                 api_url.URL_SCHEDULED_BID_SERVICE,
                 api_url.URL_SCHEDULED_BID_CONSTRUCTION,
             ]:  # 발주예정(용역)
                 # params["orderBgnYm"] = yesterday_month
-
-                params["orderBgnYm"] = last_year_december_str
+                params["bizNm"] = "설계"
+                # params["orderBgnYm"] = last_year_december_str
+                params["orderBgnYm"] = "202501"
                 params["orderEndYm"] = next_year_december_str
 
             try:
