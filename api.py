@@ -240,45 +240,45 @@ def filter_items_bid(items, url):
         print("kwater filter function")
         # 딕셔너리 리스트가 한개일때 처리 필요???  일단 오늘은 패스 231005
 
-        # # 낙찰 수자원 용역 제대로
-        # for item in kwater_items:
-        #     if (
-        #         item["cntrctDe"] == yesterday_day
-        #         and int(float(item["lastCtramt"].replace(",", "")) or 0) > 80000000
-        #         and (keyword in item["ordgTit"] for keyword in ["설계", "계획", "타당성"])
-        #     ):
-        #         filtered_items.append(item)
-
-        ## 낙찰 수자원 용역 일괄 뽑기
+        # 낙찰 수자원 용역 제대로
         for item in kwater_items:
             if (
-                int(float(item["lastCtramt"].replace(",", "")) or 0) > 65000000
-                and required_keyword in item["ordgTit"]
+                item["cntrctDe"] == yesterday_day
+                and int(float(item["lastCtramt"].replace(",", "")) or 0) > 80000000
+                and (keyword in item["ordgTit"] for keyword in ["설계", "계획", "타당성"])
             ):
                 filtered_items.append(item)
+
+        ## 낙찰 수자원 용역 일괄 뽑기
+        # for item in kwater_items:
+        #     if (
+        #         int(float(item["lastCtramt"].replace(",", "")) or 0) > 65000000
+        #         and required_keyword in item["ordgTit"]
+        #     ):
+        #         filtered_items.append(item)
 
     elif url in [
         api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION,  # 낙찰 수자원 공사
     ]:
         kwater_items = items["item"]
 
-        # ## 낙찰 수자원 공사 제대로
-        # for item in kwater_items:
-        #     if (
-        #         item["cntrctDe"] == yesterday_day
-        #         and int(float(item["lastCtramt"].replace(",", "")) or 0) > 2000000000
-        #         and (keyword in item["ordgTit"] for keyword in ["설계", "계획", "타당성"])
-        #     ):
-        #         filtered_items.append(item)
-
-        ## 낙찰 수자원 공사 일괄 뽑기
+        ## 낙찰 수자원 공사 제대로
         for item in kwater_items:
-            if int(
-                float(item["lastCtramt"].replace(",", "")) or 0
-            ) > 2000000000 and any(
-                keyword in item["ordgTit"] for keyword in search_keywords
+            if (
+                item["cntrctDe"] == yesterday_day
+                and int(float(item["lastCtramt"].replace(",", "")) or 0) > 2000000000
+                and (keyword in item["ordgTit"] for keyword in ["설계", "계획", "타당성"])
             ):
                 filtered_items.append(item)
+
+        ## 낙찰 수자원 공사 일괄 뽑기
+        # for item in kwater_items:
+        #     if int(
+        #         float(item["lastCtramt"].replace(",", "")) or 0
+        #     ) > 2000000000 and any(
+        #         keyword in item["ordgTit"] for keyword in search_keywords
+        #     ):
+        #         filtered_items.append(item)
 
     elif url == api_url.URL_SUCCESSBID_LH_SERVICE:  # LH 낙찰
         lh_items = items["item"]

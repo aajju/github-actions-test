@@ -57,7 +57,7 @@ def process_data_bid(data, category):
         print(f"나라장터 {category} 데이터를 가져오는데 실패했습니다.")
         message_bid += f"*{category}* 나라장터 정보가 없습니다 \n"
 
-    if category == "낙찰정보_민간":
+    if category == "낙찰정보_수자원":
         message_bid += f"{api_url.SPREADSHEET_LINK}"
         print(message_bid)
         slack.send_message(message_bid)
@@ -109,10 +109,10 @@ def main():
     process_data_bid(data_successbid_private, "낙찰정보_민간")
     time.sleep(1)
 
-    # # 낙찰 수자원공사
-    # data_successbid_kwater = api.get_data_successbid_kwater()
-    # process_data_bid(data_successbid_kwater, "낙찰정보_수자원")
-    # time.sleep(1)
+    # 낙찰 수자원공사
+    data_successbid_kwater = api.get_data_successbid_kwater()
+    process_data_bid(data_successbid_kwater, "낙찰정보_수자원")
+    time.sleep(1)
 
     # # 낙찰 LH
     # data_successbid_lh = api.get_data_successbid_lh()
