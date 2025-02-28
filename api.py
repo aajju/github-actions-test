@@ -11,8 +11,9 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
-
-current_date = datetime.now()
+# 한국 시간(KST) 기준으로 실행
+kst = pytz.timezone('Asia/Seoul')
+current_date = datetime.now(kst)
 
 # 날짜 비교할 기준 값 (예: 3을 넣으면 어제~3일 전까지 포함)
 days_range = 1
