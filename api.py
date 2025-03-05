@@ -240,8 +240,10 @@ def filter_items_bid(items, url):
     ]:
         kwater_items = items["item"]
         print("kwater filter function")
-        # 딕셔너리 리스트가 한개일때 처리 필요???  일단 오늘은 패스 231005
-
+        # 딕셔너리 리스트가 한개일때 처리 필요???  처리 250305
+        # 리스트가 아니면 리스트로 변환
+        if not isinstance(kwater_items, list):
+            kwater_items = [kwater_items]
         # 낙찰 수자원 용역 제대로
         for item in kwater_items:
             if (
@@ -263,7 +265,9 @@ def filter_items_bid(items, url):
         api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION,  # 낙찰 수자원 공사
     ]:
         kwater_items = items["item"]
-
+        # 리스트가 아니면 리스트로 변환
+        if not isinstance(kwater_items, list):
+            kwater_items = [kwater_items]
         ## 낙찰 수자원 공사 제대로
         for item in kwater_items:
             if (
