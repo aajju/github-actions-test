@@ -124,12 +124,12 @@ def filter_items_bid(items, url):
                 and "취소" not in ntceKindNm   
                 and "수의" not in cntrctCnclsMthdNm
                 and (
-                    (any(keyword in ntceInsttNm for keyword in instt_name))
-                    or (any(keyword in bidNtceNm for keyword in search_keywords))
-                    or any(
+                    ((any(keyword in ntceInsttNm for keyword in instt_name))
+                    or (any(keyword in bidNtceNm for keyword in search_keywords)))
+                    and any(
                         keyword in sucsfbidMthdNm
                         for keyword in [
-                            "종합",
+                            "종합", "협상","기술용역","설계공모"
                         ]
                     )
 
