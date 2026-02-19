@@ -17,7 +17,7 @@ kst = pytz.timezone('Asia/Seoul')
 current_date = datetime.now(kst)
 
 # 날짜 비교할 기준 값 (예: 3을 넣으면 어제~3일 전까지 포함)
-days_range = 4
+days_range = 1
 
 # 오늘 날짜 기준으로 시작 날짜 계산
 start_date = current_date - timedelta(days=days_range)  # 입력한 범위만큼 과거로 설정
