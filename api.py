@@ -629,7 +629,7 @@ def get_data_newopen_construction():
 def get_data_newopen_private():
     data_service = get_data_bid(api_url.URL_NEWOPEN_PRIVATE_SERVICE)
     data_construction = get_data_bid(api_url.URL_NEWOPEN_PRIVATE_CONSTRUCTION)
-    return data_service + data_construction
+    return (data_service or []) + (data_construction or [])
 
 
 def get_data_successbid_private():
@@ -649,7 +649,7 @@ def get_data_successbid_kwater():
     data_construction = get_data_bid(api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION)
     # data_product = get_data_successbid(api_url.URL_SUCCESSBID_KWATER_PRODUCT)
 
-    return data_construction + data_service  # + data_product
+    return (data_construction or []) + (data_service or [])  # + data_product
     # return data_service  # + data_product
 
 
@@ -691,4 +691,3 @@ def get_data_w_number():
 # def get_data_newopen_service_with_number():
 #     data_service = get_data_w_number(api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER)
 #     return data_service
-

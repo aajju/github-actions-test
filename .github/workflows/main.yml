@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
@@ -35,8 +35,10 @@ jobs:
         # env:
         # GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.JSON_BASE64 }}
 
-      - name: Show the content of the generated JSON file
-        run: cat ./cowithone-scrap-1686123588417-7ea5acec3d36.json
+      - name: Verify Google Sheets API credentials file
+        run: |
+          test -s ./cowithone-scrap-1686123588417-7ea5acec3d36.json
+          echo "Google Sheets API credentials file created."
 
       - name: Set environment variables
         run: |
