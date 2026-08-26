@@ -12,6 +12,39 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
+def request_get_with_retry(
+    url,
+    params=None,
+    *,
+    timeout=60,
+    attempts=3,
+    retry_delay=1,
+    verify=False,
+):
+    for attempt in range(1, attempts + 1):
+        try:
+            response = requests.get(url, params=params, verify=verify, timeout=timeout)
+        except requests.exceptions.Timeout:
+            if attempt == attempts:
+                print("서버 응답 시간이 초과되었습니다. 요청이 실패했습니다.")
+                return None
+        except requests.exceptions.RequestException as exc:
+            if attempt == attempts:
+                print(f"요청 중 오류가 발생했습니다: {exc}")
+                return None
+        else:
+            if response.status_code == 200:
+                return response
+            if attempt == attempts:
+                print("API 호출 실패:", response.status_code)
+                return None
+
+        if retry_delay:
+            time.sleep(retry_delay)
+
+    return None
+
 # 한국 시간(KST) 기준으로 실행
 kst = pytz.timezone('Asia/Seoul')
 current_date = datetime.now(kst)
@@ -452,8 +485,8 @@ def get_data_bid(url, sign=True):
 
             try:
                 print(params)
-                response = requests.get(url, params=params, verify=False, timeout=60)
-                if response.status_code == 200:
+                response = request_get_with_retry(url, params=params, verify=False)
+                if response:
                     if url == api_url.URL_SUCCESSBID_LH_SERVICE:
                         try:
                             encoding = response.encoding if response.encoding else "utf-8"
@@ -518,12 +551,13 @@ def get_data_bid(url, sign=True):
                         num_of_pages = (total_count // NUM_OF_ROWS) + 1  # 총 페이지 수 계산
                         for page in range(2, num_of_pages + 1):
                             params["pageNo"] = page  # 페이지 번호 설정
-                            response = requests.get(url, params=params, verify=False)
-                            if response.status_code == 200:
+                            response = request_get_with_retry(
+                                url, params=params, verify=False
+                            )
+                            if response:
                                 data = response.json()
                                 items += data["response"]["body"]["items"]
                             else:
-                                print("API 호출 실패:", response.status_code)
                                 return None
                     if items:
                         # print(type(items))
@@ -535,7 +569,6 @@ def get_data_bid(url, sign=True):
                         main.process_data_bid(data, "낙찰용역_w공고")
                     print("len(filtered_items):", len(filtered_items))
                 else:
-                    print("API 호출 실패:", response.status_code)
                     return None
             except requests.exceptions.Timeout:
                 print("서버 응답 시간이 초과되었습니다. 요청이 실패했습니다.")
@@ -560,8 +593,8 @@ def get_data_bid(url, sign=True):
                 params["presmptPrceBgn"] = 300000000  # 3억 이상
 
         try:
-            response = requests.get(url, params=params, verify=False, timeout=60)
-            if response.status_code == 200 and response.text :
+            response = request_get_with_retry(url, params=params, verify=False)
+            if response and response.text:
                 # print(response.text)
                 try:
                     data = response.json()
@@ -578,12 +611,13 @@ def get_data_bid(url, sign=True):
                     num_of_pages = (total_count // NUM_OF_ROWS) + 1  # 총 페이지 수 계산
                     for page in range(2, num_of_pages + 1):
                         params["pageNo"] = page  # 페이지 번호 설정
-                        response = requests.get(url, params=params, verify=False)
-                        if response.status_code == 200:
+                        response = request_get_with_retry(
+                            url, params=params, verify=False
+                        )
+                        if response:
                             data = response.json()
                             items += data["response"]["body"]["items"]
                         else:
-                            print("API 호출 실패:", response.status_code)
                             return None
                 if items:
                     # print(type(items))
@@ -592,7 +626,6 @@ def get_data_bid(url, sign=True):
 
                 print("len(filtered_items):", len(filtered_items))
             else:
-                print("API 호출 실패:", response.status_code)
                 return None
         except requests.exceptions.Timeout:
             print("서버 응답 시간이 초과되었습니다. 요청이 실패했습니다.")
@@ -669,11 +702,13 @@ def get_data_w_number():
             "type": "json",
             "bidNtceNo": bidNtceNo,
         }
-        response = requests.get(
-            api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER, params=params, verify=False
+        response = request_get_with_retry(
+            api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER,
+            params=params,
+            verify=False,
         )
         time.sleep(1)
-        if response.status_code == 200:
+        if response:
             try:
                 data = response.json()
                 new_items = data["response"]["body"]["items"]
@@ -682,7 +717,6 @@ def get_data_w_number():
                 print(f"Error occurred while parsing JSON: {e}")
 
         else:
-            print("API 호출 실패:", response.status_code)
             return None
 
     return items
