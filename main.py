@@ -71,6 +71,7 @@ def process_data_bid(data, category):
 
 
 def main():
+    api.set_target_date()
     reset_messages()
 
     # crawling.crawling()

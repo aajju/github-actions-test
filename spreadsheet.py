@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import pytz
 
 
-def get_yesterday_date():
+def get_target_date_string():
     target_date = os.getenv("SCRAPE_TARGET_DATE")
     if target_date:
         return target_date
@@ -15,6 +15,10 @@ def get_yesterday_date():
     kst = pytz.timezone("Asia/Seoul")
     yesterday = (datetime.now(kst) - timedelta(days=1)).date()
     return yesterday.strftime("%Y-%m-%d")
+
+
+def get_yesterday_date():
+    return get_target_date_string()
 
 
 def get_spreadsheet(sheetid):
@@ -235,7 +239,7 @@ def save_data_bid(items, i):
                     item["bidNtceNo"],  # 공고번호
                     item["bsnsDivNm"],  # 입찰분류(공사, 용역 등)
                     # item["bidNtceOrd"],  # 공고 차수
-                    get_yesterday_date(),  # 오늘 날짜
+                    get_target_date_string(),  # 오늘 날짜
                     item["rlOpengDt"],  # 개찰일시
                     # item["rbidNo"],  # 재공고번호
                     # item["prtcptCnum"],  # 참가업체수
