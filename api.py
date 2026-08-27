@@ -1,3 +1,4 @@
+import os
 import requests
 import api_url
 import time
@@ -46,34 +47,63 @@ def request_get_with_retry(
     return None
 
 # 한국 시간(KST) 기준으로 실행
-kst = pytz.timezone('Asia/Seoul')
-current_date = datetime.now(kst)
-
-# 날짜 비교할 기준 값 (예: 3을 넣으면 어제~3일 전까지 포함)
-days_range = 1
-
-# 오늘 날짜 기준으로 시작 날짜 계산
-start_date = current_date - timedelta(days=days_range)  # 입력한 범위만큼 과거로 설정
+kst = pytz.timezone("Asia/Seoul")
+DEFAULT_DAYS_RANGE = 1
 
 
-# 작년 12월과 내년 12월 계산
-last_year_december = current_date.replace(year=current_date.year - 1, month=12)
-next_year_december = current_date.replace(year=current_date.year + 1, month=12)
+def set_target_date(target_date=None, days_range_override=None):
+    global current_date
+    global days_range
+    global start_date
+    global last_year_december
+    global next_year_december
+    global last_year_december_str
+    global next_year_december_str
+    global yesterday
+    global yesterday_date
+    global yesterday_month
+    global yesterday_day
+    global inqry_bgn_dt
+    global inqry_end_dt
+    global one_month_ago
+    global inqry_bgn_dt_1month
 
-# 원하는 형식으로 날짜를 문자열로 변환
-last_year_december_str = last_year_december.strftime("%Y%m")
-next_year_december_str = next_year_december.strftime("%Y%m")
+    target_date_value = target_date or os.getenv("SCRAPE_TARGET_DATE")
+    if target_date_value:
+        if isinstance(target_date_value, str):
+            target_date_value = datetime.strptime(target_date_value, "%Y-%m-%d").date()
+    else:
+        target_date_value = (datetime.now(kst) - timedelta(days=1)).date()
 
-yesterday = current_date - timedelta(days=1)
-yesterday_date = yesterday.date()
-yesterday_month = yesterday.strftime("%Y%m")
-yesterday_day = int(yesterday.strftime("%Y%m%d"))
+    if days_range_override is None:
+        days_range = DEFAULT_DAYS_RANGE
+    else:
+        days_range = max(1, int(days_range_override))
 
-inqry_bgn_dt = yesterday.strftime("%Y%m%d") + "0000"
-inqry_end_dt = yesterday.strftime("%Y%m%d") + "2359"
+    current_date = kst.localize(datetime.combine(target_date_value, datetime.min.time()))
+    start_date = current_date - timedelta(days=days_range - 1)
 
-one_month_ago = current_date - timedelta(days=28)
-inqry_bgn_dt_1month = one_month_ago.strftime("%Y%m%d") + "0000"
+    last_year_december = current_date.replace(year=current_date.year - 1, month=12)
+    next_year_december = current_date.replace(year=current_date.year + 1, month=12)
+    last_year_december_str = last_year_december.strftime("%Y%m")
+    next_year_december_str = next_year_december.strftime("%Y%m")
+
+    yesterday = current_date
+    yesterday_date = target_date_value
+    yesterday_month = current_date.strftime("%Y%m")
+    yesterday_day = int(current_date.strftime("%Y%m%d"))
+    inqry_bgn_dt = current_date.strftime("%Y%m%d") + "0000"
+    inqry_end_dt = current_date.strftime("%Y%m%d") + "2359"
+
+    one_month_ago = current_date - timedelta(days=28)
+    inqry_bgn_dt_1month = one_month_ago.strftime("%Y%m%d") + "0000"
+
+
+def get_target_date_string():
+    return yesterday_date.strftime("%Y-%m-%d")
+
+
+set_target_date()
 
 
 required_keyword = "설계"  # Target keyword

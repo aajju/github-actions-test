@@ -1,12 +1,19 @@
+import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import api_url
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 
 
 def get_yesterday_date():
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    target_date = os.getenv("SCRAPE_TARGET_DATE")
+    if target_date:
+        return target_date
+
+    kst = pytz.timezone("Asia/Seoul")
+    yesterday = (datetime.now(kst) - timedelta(days=1)).date()
     return yesterday.strftime("%Y-%m-%d")
 
 
@@ -422,4 +429,3 @@ def save_data_bid(items, i):
             time.sleep(1)  # 1초 대기
 
     print("데이터가 스프레드시트에 저장되었습니다.")
-

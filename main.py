@@ -1,15 +1,22 @@
 import spreadsheet
 import slack
 import api
-import datetime
 import crawling
 import time
 import api_url
 
 
-today = datetime.date.today().strftime("%Y-%m-%d")  # 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
-message_bid = f"*{today}*\n"
-message_project = f"*{today}*\n"
+message_bid = ""
+message_project = ""
+
+
+def reset_messages():
+    global message_bid
+    global message_project
+
+    target_date = api.get_target_date_string()
+    message_bid = f"*{target_date}*\n"
+    message_project = f"*{target_date}*\n"
 
 
 def process_data_bid(data, category):
@@ -64,6 +71,7 @@ def process_data_bid(data, category):
 
 
 def main():
+    reset_messages()
 
     # crawling.crawling()
     # time.sleep(1)
