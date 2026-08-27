@@ -62,5 +62,5 @@ jobs:
 
       - name: Run main.py
         env:
-          SCRAPE_TARGET_DATE: ${{ inputs.scrape_target_date }}
+          SCRAPE_TARGET_DATE: ${{ github.event_name == 'workflow_dispatch' && inputs.scrape_target_date || '' }}
         run: python main.py # API 요청을 할 Python 스크립트 실행
