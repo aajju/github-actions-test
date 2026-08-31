@@ -2,7 +2,7 @@ name: Run Crawling
 
 on:
   schedule:
-    - cron: "37 7 * * *"
+    - cron: "37 6 * * *"
       timezone: "Asia/Seoul"
   workflow_dispatch:
     inputs:
