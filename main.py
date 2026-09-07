@@ -19,6 +19,16 @@ def reset_messages():
     message_project = f"*{target_date}*\n"
 
 
+def format_scrape_errors(errors):
+    if not errors:
+        return ""
+
+    lines = ["\n⚠️ *수집 오류*"]
+    for error in errors:
+        lines.append(f"- {error['source']}: {error['message']}")
+    return "\n".join(lines) + "\n"
+
+
 def process_data_bid(data, category):
     global message_bid
 
@@ -65,12 +75,14 @@ def process_data_bid(data, category):
         message_bid += f"*{category}* 나라장터 정보가 없습니다 \n"
 
     if category == "발주예정_용역":
+        message_bid += format_scrape_errors(api.get_scrape_errors())
         message_bid += f"{api_url.SPREADSHEET_LINK}"
         print(message_bid)
         slack.send_message(message_bid)
 
 
 def main():
+    api.reset_scrape_errors()
     api.set_target_date()
     reset_messages()
 
