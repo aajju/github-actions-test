@@ -13,6 +13,56 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+_scrape_errors = []
+
+
+def reset_scrape_errors():
+    _scrape_errors.clear()
+
+
+def get_scrape_errors():
+    return list(_scrape_errors)
+
+
+def _get_api_source_name(url):
+    source_names = {
+        api_url.URL_SCHEDULED_BID_SERVICE: "나라장터 발주예정 용역 API",
+        api_url.URL_SCHEDULED_BID_CONSTRUCTION: "나라장터 발주예정 공사 API",
+        api_url.URL_SUCCESSBID_SERVICE: "나라장터 낙찰 용역 API",
+        api_url.URL_SUCCESSBID_CONSTRUCTION: "나라장터 낙찰 공사 API",
+        api_url.URL_NEWOPEN_SERVICE: "나라장터 신규공고 용역 API",
+        api_url.URL_NEWOPEN_CONSTRUCTION: "나라장터 신규공고 공사 API",
+        api_url.URL_NEWOPEN_PRIVATE_SERVICE: "나라장터 민간 신규공고 용역 API",
+        api_url.URL_NEWOPEN_PRIVATE_CONSTRUCTION: "나라장터 민간 신규공고 공사 API",
+        api_url.URL_SUCCESSBID_PRIVATE: "나라장터 민간 낙찰 API",
+        api_url.URL_SUCCESSBID_KWATER_SERVICE: "K-water 낙찰 용역 API",
+        api_url.URL_SUCCESSBID_KWATER_CONSTRUCTION: "K-water 낙찰 공사 API",
+        api_url.URL_SUCCESSBID_LH_SERVICE: "LH 계약정보 API",
+        api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER: "나라장터 공고 상세정보 API",
+    }
+    return source_names.get(url, "외부 API")
+
+
+def _record_scrape_error(url, message):
+    error = {"source": _get_api_source_name(url), "message": message}
+    if error not in _scrape_errors:
+        _scrape_errors.append(error)
+
+
+def _record_scrape_failure(url, message):
+    _record_scrape_error(
+        url, f"{message} 이 항목은 0건이 아니라 수집 실패입니다."
+    )
+
+
+def _get_response_items(body):
+    items = body.get("items")
+    if items is None:
+        if body.get("totalCount") == 0:
+            return []
+        raise KeyError("items")
+    return items
+
 
 def request_get_with_retry(
     url,
@@ -22,22 +72,37 @@ def request_get_with_retry(
     attempts=3,
     retry_delay=1,
     verify=False,
+    failure_context="이 항목은 0건이 아니라 수집 실패입니다.",
 ):
     for attempt in range(1, attempts + 1):
         try:
             response = requests.get(url, params=params, verify=verify, timeout=timeout)
         except requests.exceptions.Timeout:
             if attempt == attempts:
+                _record_scrape_error(
+                    url,
+                    f"API 응답시간 초과 — {timeout}초 제한으로 총 {attempts}회 "
+                    f"요청했지만 실패했습니다. {failure_context}",
+                )
                 print("서버 응답 시간이 초과되었습니다. 요청이 실패했습니다.")
                 return None
-        except requests.exceptions.RequestException as exc:
+        except requests.exceptions.RequestException:
             if attempt == attempts:
-                print(f"요청 중 오류가 발생했습니다: {exc}")
+                _record_scrape_error(
+                    url,
+                    f"API 연결 중 네트워크 오류가 발생했습니다. {failure_context}",
+                )
+                print("API 연결 중 네트워크 오류가 발생했습니다.")
                 return None
         else:
             if response.status_code == 200:
                 return response
             if attempt == attempts:
+                _record_scrape_error(
+                    url,
+                    f"API가 HTTP {response.status_code} 오류를 반환했습니다. "
+                    f"{failure_context}",
+                )
                 print("API 호출 실패:", response.status_code)
                 return None
 
@@ -514,7 +579,6 @@ def get_data_bid(url, sign=True):
                 params["orderEndYm"] = next_year_december_str
 
             try:
-                print(params)
                 response = request_get_with_retry(url, params=params, verify=False)
                 if response:
                     if url == api_url.URL_SUCCESSBID_LH_SERVICE:
@@ -562,16 +626,25 @@ def get_data_bid(url, sign=True):
                             items = json.loads(items_str)
                             # print(items)
                         except (ET.ParseError, AttributeError) as e:
+                            _record_scrape_failure(
+                                url,
+                                "API 응답 데이터 형식이 올바르지 않아 처리하지 못했습니다.",
+                            )
                             print(f"Error occurred while parsing XML: {e}")
                     else:
                         # print(response.text)
                         try:
                             data = response.json()
                             # print(data)
-                            total_count = data["response"]["body"]["totalCount"]
-                            items = data["response"]["body"]["items"]
+                            body = data["response"]["body"]
+                            total_count = body["totalCount"]
+                            items = _get_response_items(body)
                             # print(items)
                         except (KeyError, requests.exceptions.JSONDecodeError) as e:
+                            _record_scrape_failure(
+                                url,
+                                "API 응답 데이터 형식이 올바르지 않아 처리하지 못했습니다.",
+                            )
                             print(f"Error occurred while parsing JSON: {e}")
                             total_count = -1  # 예외 발생 시 total_count를 -1으로 초기화
                             items = []  # items 키가 없는 경우 빈 리스트로 초기화
@@ -582,13 +655,30 @@ def get_data_bid(url, sign=True):
                         for page in range(2, num_of_pages + 1):
                             params["pageNo"] = page  # 페이지 번호 설정
                             response = request_get_with_retry(
-                                url, params=params, verify=False
+                                url,
+                                params=params,
+                                verify=False,
+                                failure_context=(
+                                    "이 때문에 후속 페이지 일부가 누락됐을 수 있습니다."
+                                ),
                             )
                             if response:
-                                data = response.json()
-                                items += data["response"]["body"]["items"]
+                                try:
+                                    data = response.json()
+                                    page_items = _get_response_items(
+                                        data["response"]["body"]
+                                    )
+                                    items += page_items
+                                except (KeyError, requests.exceptions.JSONDecodeError) as e:
+                                    _record_scrape_error(
+                                        url,
+                                        "API 후속 페이지의 데이터 형식이 올바르지 않아 "
+                                        "일부 자료를 처리하지 못했습니다.",
+                                    )
+                                    print(f"Error occurred while parsing JSON: {e}")
+                                    break
                             else:
-                                return None
+                                break
                     if items:
                         # print(type(items))
                         # print(items[0])
@@ -629,10 +719,15 @@ def get_data_bid(url, sign=True):
                 try:
                     data = response.json()
                     # print(data)
-                    total_count = data["response"]["body"]["totalCount"]
-                    items = data["response"]["body"]["items"]
+                    body = data["response"]["body"]
+                    total_count = body["totalCount"]
+                    items = _get_response_items(body)
                     # print(items)
                 except (KeyError, requests.exceptions.JSONDecodeError) as e:
+                    _record_scrape_failure(
+                        url,
+                        "API 응답 데이터 형식이 올바르지 않아 처리하지 못했습니다.",
+                    )
                     print(f"Error occurred while parsing JSON: {e}")
                     total_count = -1  # 예외 발생 시 total_count를 -1으로 초기화
                     items = []  # items 키가 없는 경우 빈 리스트로 초기화
@@ -642,19 +737,41 @@ def get_data_bid(url, sign=True):
                     for page in range(2, num_of_pages + 1):
                         params["pageNo"] = page  # 페이지 번호 설정
                         response = request_get_with_retry(
-                            url, params=params, verify=False
+                            url,
+                            params=params,
+                            verify=False,
+                            failure_context=(
+                                "이 때문에 후속 페이지 일부가 누락됐을 수 있습니다."
+                            ),
                         )
                         if response:
-                            data = response.json()
-                            items += data["response"]["body"]["items"]
+                            try:
+                                data = response.json()
+                                page_items = _get_response_items(
+                                    data["response"]["body"]
+                                )
+                                items += page_items
+                            except (KeyError, requests.exceptions.JSONDecodeError) as e:
+                                _record_scrape_error(
+                                    url,
+                                    "API 후속 페이지의 데이터 형식이 올바르지 않아 "
+                                    "일부 자료를 처리하지 못했습니다.",
+                                )
+                                print(f"Error occurred while parsing JSON: {e}")
+                                break
                         else:
-                            return None
+                            break
                 if items:
                     # print(type(items))
                     # print(items[0])
                     filtered_items = filter_items_bid2(items, url)
 
                 print("len(filtered_items):", len(filtered_items))
+            elif response:
+                _record_scrape_failure(
+                    url, "API 응답 본문이 비어 있어 처리하지 못했습니다."
+                )
+                return None
             else:
                 return None
         except requests.exceptions.Timeout:
@@ -723,6 +840,8 @@ def get_data_successbid_lh():
 def get_data_w_number():
     global bidNtceNos
     items = []  # 결과를 담을 빈 리스트
+    failed_detail_count = 0
+    total_detail_count = len(bidNtceNos)
     for bidNtceNo in bidNtceNos:
         params = {
             "ServiceKey": api_url.API_KEY,
@@ -736,18 +855,40 @@ def get_data_w_number():
             api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER,
             params=params,
             verify=False,
+            failure_context="해당 상세정보를 처리하지 못했습니다.",
         )
         time.sleep(1)
         if response:
             try:
                 data = response.json()
-                new_items = data["response"]["body"]["items"]
+                body = data["response"]["body"]
+                new_items = _get_response_items(body)
                 items.extend(new_items)  # 각 new_item을 items 리스트에 추가합니다.
             except (KeyError, requests.exceptions.JSONDecodeError) as e:
+                failed_detail_count += 1
+                _record_scrape_error(
+                    api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER,
+                    "API 상세정보 응답 데이터 형식이 올바르지 않아 일부 자료를 "
+                    "처리하지 못했습니다.",
+                )
                 print(f"Error occurred while parsing JSON: {e}")
 
         else:
-            return None
+            failed_detail_count += 1
+            continue
+
+    if failed_detail_count:
+        if failed_detail_count == total_detail_count:
+            _record_scrape_failure(
+                api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER,
+                f"상세정보 {total_detail_count}건을 모두 수집하지 못했습니다.",
+            )
+        else:
+            _record_scrape_error(
+                api_url.URL_NEWOPEN_SERVICE_WITH_NUMBER,
+                f"상세정보 전체 {total_detail_count}건 중 {failed_detail_count}건을 "
+                "수집하지 못해 일부 자료가 누락됐을 수 있습니다.",
+            )
 
     return items
 
