@@ -102,6 +102,21 @@ class ScrapeErrorSlackMessageTests(unittest.TestCase):
         self.assertNotIn("이전 실행", sent_message)
         self.assertNotIn("⚠️ *수집 오류*", sent_message)
 
+    def test_successbid_scrape_omits_unused_announcement_detail_category(self):
+        empty_response = JsonResponse(
+            {"response": {"body": {"totalCount": 0}}}
+        )
+        original_numbers = api.bidNtceNos
+        api.bidNtceNos = []
+        main.message_bid = "*2026-09-07*\n"
+        try:
+            with patch("api.requests.get", return_value=empty_response):
+                api.get_data_bid(api_url.URL_SUCCESSBID_SERVICE)
+        finally:
+            api.bidNtceNos = original_numbers
+
+        self.assertNotIn("낙찰용역_w공고", main.message_bid)
+
 
 class ApiErrorCollectionTests(unittest.TestCase):
     def setUp(self):

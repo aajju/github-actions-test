@@ -684,9 +684,11 @@ def get_data_bid(url, sign=True):
                         # print(items[0])
                         filtered_items = filter_items_bid(items, url)
 
-                    if url == api_url.URL_SUCCESSBID_SERVICE:
-                        data = get_data_w_number()
-                        main.process_data_bid(data, "낙찰용역_w공고")
+                    # 낙찰 용역의 원 공고 상세정보는 스프레드시트 8번째 탭에만
+                    # 중복 저장하던 보조 데이터이므로 더 이상 조회하지 않습니다.
+                    # if url == api_url.URL_SUCCESSBID_SERVICE:
+                    #     data = get_data_w_number()
+                    #     main.process_data_bid(data, "낙찰용역_w공고")
                     print("len(filtered_items):", len(filtered_items))
                 else:
                     return None
